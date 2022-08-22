@@ -3,8 +3,11 @@ package com.lifungula.entities;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
@@ -15,6 +18,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name="TYPE", length =4)
 @Data @NoArgsConstructor @AllArgsConstructor
 public class BankAccount {
 	@Id
@@ -24,7 +29,7 @@ public class BankAccount {
 	private AccountStatus status;
 	@ManyToOne
 	private Customer customer;
- 	@OneToMany 
+ 	@OneToMany(mappedBy ="bankAccount") 
 	private List<AccountOperation> accountOperations;
 
 
