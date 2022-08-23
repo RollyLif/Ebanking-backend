@@ -5,6 +5,8 @@ import java.util.List;
 
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
@@ -26,6 +28,7 @@ public class BankAccount {
 	private String id;
 	private double balance;
 	private Date createdAt;
+	@Enumerated(EnumType.STRING)
 	private AccountStatus status;
 	@ManyToOne
 	private Customer customer;
