@@ -88,8 +88,9 @@ public class BankAccountServiceImpl implements BankAccountService{
 	}
 
 	@Override
-	public void transfer(String accountIdSource, String accountIdDestination, double amount) {
-		// TODO Auto-generated method stub
+	public void transfer(String accountIdSource, String accountIdDestination, double amount) throws BankAccountNotFoundException, BalanceNotSufficientException {
+		debit(accountIdSource, amount, "transfer to "+accountIdDestination);
+		credit(accountIdDestination,amount, "transfer from "+accountIdSource);
 		
 	}
 
