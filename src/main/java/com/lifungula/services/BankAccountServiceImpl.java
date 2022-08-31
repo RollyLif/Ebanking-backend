@@ -10,10 +10,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.lifungula.entities.AccountOperation;
 import com.lifungula.entities.BankAccount;
 import com.lifungula.entities.CurrentAccount;
 import com.lifungula.entities.Customer;
 import com.lifungula.entities.SavingAccount;
+import com.lifungula.enums.OperationType;
+import com.lifungula.exception.BalanceNotSufficientException;
+import com.lifungula.exception.BankAccountNotFoundException;
 import com.lifungula.exception.CustomerNotFoundException;
 import com.lifungula.repositories.AccountOperationRepository;
 import com.lifungula.repositories.BankAccountRepository;
@@ -47,21 +51,40 @@ public class BankAccountServiceImpl implements BankAccountService{
 	}
 
 	@Override
-	public BankAccount getBankAccount(String accountid) {
-		// TODO Auto-generated method stub
-		return null;
+	public BankAccount getBankAccount(String accountid) throws BankAccountNotFoundException {
+		BankAccount bankAccount = bankAccountRepository.findById(accountid).orElseThrow(()-> new BankAccountNotFoundException("BankAccount not found")); 
+		return bankAccount;
 	}
 
 	@Override
-	public void debit(String accountID, double amount, String description) {
-		// TODO Auto-generated method stub
+	public void debit(String accountID, double amount, String description) throws BankAccountNotFoundException, BalanceNotSufficientException {
+		BankAccount bankAccount = getBankAccount(accountID);
+		if(bankAccount.getBalance()<amount) throw new BalanceNotSufficientException("Balance not sufficient");
+		
+		AccountOperation accountOperation = new AccountOperation();
+		accountOperation.setType(OperationType.DEBIT);
+		accountOperation.setAmount(amount);
+		accountOperation.setDescription(description);
+		accountOperation.setOperationDate(new Date());
+		accountOperation.setBankAccount(bankAccount);
+		accountOperationRepository.save(accountOperation);
+		bankAccount.setBalance(bankAccount.getBalance()-amount);
+		bankAccountRepository.save(bankAccount);
 		
 	}
 
 	@Override
-	public void credit(String accountID, double amount, String description) {
-		// TODO Auto-generated method stub
-		
+	public void credit(String accountID, double amount, String description) throws BankAccountNotFoundException {
+		BankAccount bankAccount = getBankAccount(accountID);
+		AccountOperation accountOperation = new AccountOperation();
+		accountOperation.setType(OperationType.CREDIT);
+		accountOperation.setAmount(amount);
+		accountOperation.setDescription(description);
+		accountOperation.setOperationDate(new Date());
+		accountOperation.setBankAccount(bankAccount);
+		accountOperationRepository.save(accountOperation);
+		bankAccount.setBalance(bankAccount.getBalance()+amount);
+		bankAccountRepository.save(bankAccount);
 	}
 
 	@Override
