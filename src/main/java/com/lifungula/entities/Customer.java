@@ -8,6 +8,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -21,5 +23,6 @@ public class Customer {
 	private String name;
 	private String email;
 	@OneToMany(mappedBy = "customer")
+	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 	private List<BankAccount> bankAccounts;
 }

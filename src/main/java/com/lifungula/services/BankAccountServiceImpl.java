@@ -46,8 +46,7 @@ public class BankAccountServiceImpl implements BankAccountService{
 
 	@Override
 	public List<Customer> ListCustomers() {
-		// TODO Auto-generated method stub
-		return null;
+		return customerRepository.findAll();
 	}
 
 	@Override
@@ -99,15 +98,16 @@ public class BankAccountServiceImpl implements BankAccountService{
 			throws CustomerNotFoundException {
 		
 		Customer customer = customerRepository.findById(customerId).orElse(null);
-		if(customer==null)
-			throw new CustomerNotFoundException("customer not found");
 		CurrentAccount bankAccount = new CurrentAccount();
+		if(customer==null) {
+			throw new CustomerNotFoundException("customer not found");
+		}else {
 		bankAccount.setId(UUID.randomUUID().toString());
 		bankAccount.setCreatedAt(new Date());
 		bankAccount.setBalance(intialBalance);
 		bankAccount.setOverDraft(overDraft);
 		bankAccount.setCustomer(customer);
-		
+		}
 	 	return bankAccountRepository.save(bankAccount);
 	}
 
@@ -117,16 +117,24 @@ public class BankAccountServiceImpl implements BankAccountService{
 		
 
 		Customer customer = customerRepository.findById(customerId).orElse(null);
-		if(customer==null)
-			throw new CustomerNotFoundException("customer not found");
 		SavingAccount bankAccount = new SavingAccount ();
+		if(customer==null) {
+			throw new CustomerNotFoundException("customer not found");
+		}else {
 		bankAccount.setId(UUID.randomUUID().toString());
 		bankAccount.setCreatedAt(new Date());
 		bankAccount.setBalance(intialBalance);
 		bankAccount.setInterestRate(interestRate);
 		bankAccount.setCustomer(customer);
-		
+		System.out.println("créer");
+		}
 	 	return bankAccountRepository.save(bankAccount);
+	 	
+	}
+	
+	@Override
+	public List<BankAccount> bankAccountList(){
+		return bankAccountRepository.findAll();
 	}
 
 }
