@@ -3,10 +3,9 @@ package com.lifungula.web;
 import java.util.List;
 
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.lifungula.entities.Customer;
+import com.lifungula.dtos.CustomerDTO;
 import com.lifungula.services.BankAccountService;
 
 import lombok.AllArgsConstructor;
@@ -19,7 +18,7 @@ public class CustomerRestController {
 	private BankAccountService bankAccountService;
 	
 	@GetMapping("/customers")
-	public List<Customer> customers(){
+	public List<CustomerDTO> customers(){
 		return bankAccountService.ListCustomers();
 	}
 

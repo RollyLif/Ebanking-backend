@@ -3,6 +3,7 @@ package com.lifungula.services;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.lifungula.dtos.CustomerDTO;
 import com.lifungula.entities.AccountOperation;
 import com.lifungula.entities.BankAccount;
 import com.lifungula.entities.CurrentAccount;
@@ -19,6 +21,7 @@ import com.lifungula.enums.OperationType;
 import com.lifungula.exception.BalanceNotSufficientException;
 import com.lifungula.exception.BankAccountNotFoundException;
 import com.lifungula.exception.CustomerNotFoundException;
+import com.lifungula.mappers.BankAccountMapperImpl;
 import com.lifungula.repositories.AccountOperationRepository;
 import com.lifungula.repositories.BankAccountRepository;
 import com.lifungula.repositories.CustomerRepository;
@@ -35,7 +38,7 @@ public class BankAccountServiceImpl implements BankAccountService{
 	private CustomerRepository customerRepository;
 	private BankAccountRepository bankAccountRepository;
 	private AccountOperationRepository accountOperationRepository;
-	
+	private BankAccountMapperImpl dtoMapper;
 	
 	@Override
 	public Customer saveCustomer(Customer customer) {
@@ -45,8 +48,10 @@ public class BankAccountServiceImpl implements BankAccountService{
 	}
 
 	@Override
-	public List<Customer> ListCustomers() {
-		return customerRepository.findAll();
+	public List<CustomerDTO> ListCustomers() {
+		 List<Customer> customers = customerRepository.findAll();
+		 List<CustomerDTO> collect = customers.stream().map(cust -> dtoMapper.fromCustomer(cust)).collect(Collectors.toList());
+		 return collect;
 	}
 
 	@Override

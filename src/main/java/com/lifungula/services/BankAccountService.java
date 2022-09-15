@@ -2,6 +2,7 @@ package com.lifungula.services;
 
 import java.util.List;
 
+import com.lifungula.dtos.CustomerDTO;
 import com.lifungula.entities.BankAccount;
 import com.lifungula.entities.CurrentAccount;
 import com.lifungula.entities.Customer;
@@ -15,7 +16,7 @@ public interface BankAccountService {
 	Customer saveCustomer(Customer customer);
 	CurrentAccount saveCurrentBankAccount(double intialBalance,double overDraft, Long customerId) throws CustomerNotFoundException;
 	SavingAccount saveSavingBankAccount(double intialBalance,double interestRate, Long customerId) throws CustomerNotFoundException;
-	List<Customer> ListCustomers();
+	List<CustomerDTO> ListCustomers();
 	BankAccount getBankAccount(String accountid) throws BankAccountNotFoundException;
 	void debit(String accountID, double amount, String description) throws BankAccountNotFoundException, BalanceNotSufficientException;
 	void credit(String accountID, double amount, String description) throws BankAccountNotFoundException;
