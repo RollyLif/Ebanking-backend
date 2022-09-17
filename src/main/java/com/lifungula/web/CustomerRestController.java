@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.lifungula.dtos.CustomerDTO;
@@ -24,9 +26,17 @@ public class CustomerRestController {
 		return bankAccountService.ListCustomers();
 	}
 	
-	@GetMapping("/customer/{id}")
+	@GetMapping("/customers/{id}")
 	public CustomerDTO getCustomer(@PathVariable(name= "id") Long customerId) throws CustomerNotFoundException {
 		return bankAccountService.getCustomer(customerId);
+	}
+	
+	@PostMapping("/customers")
+	public CustomerDTO saveCustomer(@RequestBody CustomerDTO customerDTO) {
+		return customerDTO;
+		
+		
+		
 	}
 
 }
