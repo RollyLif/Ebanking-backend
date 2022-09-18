@@ -33,8 +33,7 @@ public class CustomerRestController {
 	
 	@PostMapping("/customers")
 	public CustomerDTO saveCustomer(@RequestBody CustomerDTO customerDTO) {
-		return customerDTO;
-		
+		return bankAccountService.saveCustomer(customerDTO);
 		
 		
 	}

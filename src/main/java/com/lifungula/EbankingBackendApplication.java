@@ -8,6 +8,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
+import com.lifungula.dtos.CustomerDTO;
 import com.lifungula.entities.BankAccount;
 import com.lifungula.entities.Customer;
 import com.lifungula.exception.BalanceNotSufficientException;
@@ -26,7 +27,7 @@ public class EbankingBackendApplication {
 	CommandLineRunner commandLineRunner(BankAccountService bankAccountService) {
 			return args -> {
 				Stream.of("Rolly", "Kadima", "Lifungula").forEach(name->{
-					 Customer customer = new Customer();
+					 CustomerDTO customer = new CustomerDTO();
 					 customer.setName(name);
 					 customer.setEmail(name+"@gmail.com");
 					 bankAccountService.saveCustomer(customer);
