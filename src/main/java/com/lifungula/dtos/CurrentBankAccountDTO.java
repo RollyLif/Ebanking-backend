@@ -9,7 +9,7 @@ import com.lifungula.enums.AccountStatus;
 import lombok.Data;
 
 @Data 
-public abstract class CurrentBankAccountDTO {
+public class CurrentBankAccountDTO {
 	@Id
 	private String id;
 	private double balance;
