@@ -3,7 +3,7 @@ package com.lifungula.dtos;
 import lombok.Data;
 
 @Data
-public class CustomerDTO {
+public class CustomerDTO{
 	
 	private Long id;
 	private String name;

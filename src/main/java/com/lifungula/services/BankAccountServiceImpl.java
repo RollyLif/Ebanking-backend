@@ -5,13 +5,13 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.lifungula.dtos.BankAccountDTO;
+import com.lifungula.dtos.CurrentBankAccountDTO;
 import com.lifungula.dtos.CustomerDTO;
+import com.lifungula.dtos.SavingBankAccountDTO;
 import com.lifungula.entities.AccountOperation;
 import com.lifungula.entities.BankAccount;
 import com.lifungula.entities.CurrentAccount;
@@ -56,14 +56,20 @@ public class BankAccountServiceImpl implements BankAccountService{
 	}
 
 	@Override
-	public BankAccount getBankAccount(String accountid) throws BankAccountNotFoundException {
+	public BankAccountDTO getBankAccount(String accountid) throws BankAccountNotFoundException {
 		BankAccount bankAccount = bankAccountRepository.findById(accountid).orElseThrow(()-> new BankAccountNotFoundException("BankAccount not found")); 
-		return bankAccount;
+		if(bankAccount instanceof SavingAccount) {
+			SavingAccount savingAccount = (SavingAccount) bankAccount;
+			return dtoMapper.fromSavingBankAccount(savingAccount);
+		}else {
+			CurrentAccount currentAccount = (CurrentAccount) bankAccount;
+			return dtoMapper.fromCurrentBankAccount(currentAccount);
+		}
 	}
 
 	@Override
 	public void debit(String accountID, double amount, String description) throws BankAccountNotFoundException, BalanceNotSufficientException {
-		BankAccount bankAccount = getBankAccount(accountID);
+		BankAccount bankAccount = bankAccountRepository.findById(accountID).orElseThrow(()-> new BankAccountNotFoundException("BankAccount not found"));
 		if(bankAccount.getBalance()<amount) throw new BalanceNotSufficientException("Balance not sufficient");
 		
 		AccountOperation accountOperation = new AccountOperation();
@@ -80,7 +86,7 @@ public class BankAccountServiceImpl implements BankAccountService{
 
 	@Override
 	public void credit(String accountID, double amount, String description) throws BankAccountNotFoundException {
-		BankAccount bankAccount = getBankAccount(accountID);
+		BankAccount bankAccount = bankAccountRepository.findById(accountID).orElseThrow(()-> new BankAccountNotFoundException("BankAccount not found"));
 		AccountOperation accountOperation = new AccountOperation();
 		accountOperation.setType(OperationType.CREDIT);
 		accountOperation.setAmount(amount);
@@ -100,7 +106,7 @@ public class BankAccountServiceImpl implements BankAccountService{
 	}
 
 	@Override
-	public CurrentAccount saveCurrentBankAccount(double intialBalance, double overDraft, Long customerId)
+	public CurrentBankAccountDTO saveCurrentBankAccount(double intialBalance, double overDraft, Long customerId)
 			throws CustomerNotFoundException {
 		
 		Customer customer = customerRepository.findById(customerId).orElse(null);
@@ -114,11 +120,11 @@ public class BankAccountServiceImpl implements BankAccountService{
 		bankAccount.setOverDraft(overDraft);
 		bankAccount.setCustomer(customer);
 		}
-	 	return bankAccountRepository.save(bankAccount);
+	 	return dtoMapper.fromCurrentBankAccount(bankAccount);
 	}
 
 	@Override
-	public SavingAccount saveSavingBankAccount(double intialBalance, double interestRate, Long customerId)
+	public SavingBankAccountDTO saveSavingBankAccount(double intialBalance, double interestRate, Long customerId)
 			throws CustomerNotFoundException {
 		
 
@@ -134,13 +140,24 @@ public class BankAccountServiceImpl implements BankAccountService{
 		bankAccount.setCustomer(customer);
 		System.out.println("créer");
 		}
-	 	return bankAccountRepository.save(bankAccount);
+	 	return dtoMapper.fromSavingBankAccount(bankAccount);
 	 	
 	}
 	
 	@Override
-	public List<BankAccount> bankAccountList(){
-		return bankAccountRepository.findAll();
+	public List<BankAccountDTO> bankAccountList(){
+		List<BankAccount> bankAccounts = bankAccountRepository.findAll();
+		List<BankAccountDTO> bankAccountDTOs = bankAccounts.stream().map(bankaccount ->{
+			if(bankaccount instanceof SavingAccount) {
+				SavingAccount savingAccount = (SavingAccount) bankaccount;
+				return dtoMapper.fromSavingBankAccount(savingAccount);
+			}else {
+				CurrentAccount currentAccount = (CurrentAccount) bankaccount;
+				return dtoMapper.fromCurrentBankAccount(currentAccount);
+			}
+		}).collect(Collectors.toList());
+		
+		return bankAccountDTOs;
 	}
 	
 	@Override

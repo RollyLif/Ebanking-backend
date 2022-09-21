@@ -2,15 +2,12 @@ package com.lifungula.dtos;
 
 import java.util.Date;
 
-import javax.persistence.Id;
-
 import com.lifungula.enums.AccountStatus;
 
 import lombok.Data;
 
 @Data 
-public class CurrentBankAccountDTO {
-	@Id
+public class CurrentBankAccountDTO extends BankAccountDTO{
 	private String id;
 	private double balance;
 	private Date createdAt;

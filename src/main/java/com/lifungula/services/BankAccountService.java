@@ -2,10 +2,10 @@ package com.lifungula.services;
 
 import java.util.List;
 
+import com.lifungula.dtos.BankAccountDTO;
+import com.lifungula.dtos.CurrentBankAccountDTO;
 import com.lifungula.dtos.CustomerDTO;
-import com.lifungula.entities.BankAccount;
-import com.lifungula.entities.CurrentAccount;
-import com.lifungula.entities.SavingAccount;
+import com.lifungula.dtos.SavingBankAccountDTO;
 import com.lifungula.exception.BalanceNotSufficientException;
 import com.lifungula.exception.BankAccountNotFoundException;
 import com.lifungula.exception.CustomerNotFoundException;
@@ -13,14 +13,14 @@ import com.lifungula.exception.CustomerNotFoundException;
 public interface BankAccountService {
 	
 	CustomerDTO saveCustomer(CustomerDTO customerDTO);
-	CurrentAccount saveCurrentBankAccount(double intialBalance,double overDraft, Long customerId) throws CustomerNotFoundException;
-	SavingAccount saveSavingBankAccount(double intialBalance,double interestRate, Long customerId) throws CustomerNotFoundException;
+	CurrentBankAccountDTO saveCurrentBankAccount(double intialBalance,double overDraft, Long customerId) throws CustomerNotFoundException;
+	SavingBankAccountDTO saveSavingBankAccount(double intialBalance,double interestRate, Long customerId) throws CustomerNotFoundException;
 	List<CustomerDTO> ListCustomers();
-	BankAccount getBankAccount(String accountid) throws BankAccountNotFoundException;
+	BankAccountDTO getBankAccount(String accountid) throws BankAccountNotFoundException;
 	void debit(String accountID, double amount, String description) throws BankAccountNotFoundException, BalanceNotSufficientException;
 	void credit(String accountID, double amount, String description) throws BankAccountNotFoundException;
 	void transfer(String accountIdSource, String accountIdDestination,double amount) throws BankAccountNotFoundException, BalanceNotSufficientException;
-	List<BankAccount> bankAccountList();
+	List<BankAccountDTO> bankAccountList();
 	CustomerDTO getCustomer(Long customerId) throws CustomerNotFoundException;
 	CustomerDTO updateCustomer(CustomerDTO customerDTO);
 	void deleteCustomer(Long customerId);

@@ -8,9 +8,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
+import com.lifungula.dtos.BankAccountDTO;
+import com.lifungula.dtos.CurrentBankAccountDTO;
 import com.lifungula.dtos.CustomerDTO;
-import com.lifungula.entities.BankAccount;
-import com.lifungula.entities.Customer;
+import com.lifungula.dtos.SavingBankAccountDTO;
 import com.lifungula.exception.BalanceNotSufficientException;
 import com.lifungula.exception.BankAccountNotFoundException;
 import com.lifungula.exception.CustomerNotFoundException;
@@ -36,11 +37,20 @@ public class EbankingBackendApplication {
 					try {
 						bankAccountService.saveCurrentBankAccount(Math.random()*90000, 9000, customer.getId());
 						bankAccountService.saveSavingBankAccount(Math.random()*120000, 5.5, customer.getId());
-						List<BankAccount> bankAccounts = bankAccountService.bankAccountList();
-						for(BankAccount bankAccount : bankAccounts) {
+						List<BankAccountDTO> bankAccounts = bankAccountService.bankAccountList();
+						for(BankAccountDTO bankAccount : bankAccounts) {
+							
 							for(int i=0; i<10;i++){
-								bankAccountService.credit(bankAccount.getId(), 10000+Math.random()*120000, "Credit");
-								bankAccountService.debit(bankAccount.getId(), 1000+Math.random()*9000, "Debit");
+								String accountId;
+								
+								if(bankAccount instanceof SavingBankAccountDTO) {
+									accountId =((SavingBankAccountDTO) bankAccount).getId();
+								}else{
+									accountId =((CurrentBankAccountDTO) bankAccount).getId();
+								}
+								
+								bankAccountService.credit(accountId, 10000+Math.random()*120000, "Credit");
+								bankAccountService.debit(accountId, 1000+Math.random()*9000, "Debit");
 							}
 						}
 					}catch (CustomerNotFoundException e) {
