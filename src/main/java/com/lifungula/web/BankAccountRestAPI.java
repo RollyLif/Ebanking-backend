@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.lifungula.dtos.AccountOperationDTO;
 import com.lifungula.dtos.BankAccountDTO;
 import com.lifungula.exception.BankAccountNotFoundException;
 import com.lifungula.services.BankAccountService;
@@ -30,5 +31,10 @@ public class BankAccountRestAPI {
 	@GetMapping("/accounts")
 	public List<BankAccountDTO> listAccounts(){
 		return bankAccountService.bankAccountList();
+	}
+	
+	@GetMapping("/accounts/{accountId}/operations")
+	public List<AccountOperationDTO> getHistory(@PathVariable String accountId){
+		return bankAccountService.accountHistory(accountId);
 	}
 }

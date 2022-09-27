@@ -3,9 +3,11 @@ package com.lifungula.mappers;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
+import com.lifungula.dtos.AccountOperationDTO;
 import com.lifungula.dtos.CurrentBankAccountDTO;
 import com.lifungula.dtos.CustomerDTO;
 import com.lifungula.dtos.SavingBankAccountDTO;
+import com.lifungula.entities.AccountOperation;
 import com.lifungula.entities.CurrentAccount;
 import com.lifungula.entities.Customer;
 import com.lifungula.entities.SavingAccount;
@@ -56,5 +58,11 @@ public class BankAccountMapperImpl {
 		BeanUtils.copyProperties(currentBankAccountDTO, savAc);
 		savAc.setCustomer(fromCustomerDTO(currentBankAccountDTO.getCustomerDTO()));
 		return savAc;
+	}
+	
+	public AccountOperationDTO fromAccountOperation(AccountOperation accountOperation) {
+		AccountOperationDTO accountOperationDTO = new AccountOperationDTO();
+		BeanUtils.copyProperties(accountOperation, accountOperationDTO);
+		return accountOperationDTO;
 	}
 }

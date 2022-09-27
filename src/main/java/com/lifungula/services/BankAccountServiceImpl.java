@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.lifungula.dtos.AccountOperationDTO;
 import com.lifungula.dtos.BankAccountDTO;
 import com.lifungula.dtos.CurrentBankAccountDTO;
 import com.lifungula.dtos.CustomerDTO;
@@ -175,6 +176,12 @@ public class BankAccountServiceImpl implements BankAccountService{
 	@Override
 	public void deleteCustomer(Long customerId) {
 		customerRepository.deleteById(customerId);
+	}
+	
+	@Override
+	public List<AccountOperationDTO> accountHistory(String accountId){
+		List<AccountOperation> bai=accountOperationRepository.findByBankAccountId(accountId);
+		return bai.stream().map(op->dtoMapper.fromAccountOperation(op)).collect(Collectors.toList());
 	}
 
 }
