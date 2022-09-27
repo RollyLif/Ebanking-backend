@@ -2,6 +2,7 @@ package com.lifungula.services;
 
 import java.util.List;
 
+import com.lifungula.dtos.AccountHistoryDTO;
 import com.lifungula.dtos.AccountOperationDTO;
 import com.lifungula.dtos.BankAccountDTO;
 import com.lifungula.dtos.CurrentBankAccountDTO;
@@ -26,5 +27,6 @@ public interface BankAccountService {
 	CustomerDTO updateCustomer(CustomerDTO customerDTO);
 	void deleteCustomer(Long customerId);
 	List<AccountOperationDTO> accountHistory(String accountId);
+	AccountHistoryDTO getAccountHistory(String accountId, int page, int size) throws BankAccountNotFoundException;
 	
 }

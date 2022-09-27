@@ -4,14 +4,14 @@ import java.util.List;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.lifungula.dtos.AccountHistoryDTO;
 import com.lifungula.dtos.AccountOperationDTO;
 import com.lifungula.dtos.BankAccountDTO;
 import com.lifungula.exception.BankAccountNotFoundException;
 import com.lifungula.services.BankAccountService;
-
-import lombok.AllArgsConstructor;
 
 @RestController
 public class BankAccountRestAPI {
@@ -36,5 +36,12 @@ public class BankAccountRestAPI {
 	@GetMapping("/accounts/{accountId}/operations")
 	public List<AccountOperationDTO> getHistory(@PathVariable String accountId){
 		return bankAccountService.accountHistory(accountId);
+	}
+	
+	@GetMapping("/accounts/{accountId}/pageOperation")
+	public AccountHistoryDTO getAccountHistory(@PathVariable String accountId,
+			@RequestParam(name="page", defaultValue="0") int page,
+			@RequestParam(name="size", defaultValue="5") int size) throws BankAccountNotFoundException{
+		return bankAccountService.getAccountHistory(accountId, page, size);
 	}
 }
