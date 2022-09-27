@@ -27,33 +27,35 @@ public class EbankingBackendApplication {
 	@Bean
 	CommandLineRunner commandLineRunner(BankAccountService bankAccountService) {
 			return args -> {
-				Stream.of("Rolly", "Kadima", "Lifungula").forEach(name->{
+				Stream.of("Jojo", "Will", "Jophiel").forEach(name->{
 					 CustomerDTO customer = new CustomerDTO();
 					 customer.setName(name);
 					 customer.setEmail(name+"@gmail.com");
 					 bankAccountService.saveCustomer(customer);
 				});
 				bankAccountService.ListCustomers().forEach(customer -> {
+					
 					try {
 						bankAccountService.saveCurrentBankAccount(Math.random()*90000, 9000, customer.getId());
 						bankAccountService.saveSavingBankAccount(Math.random()*120000, 5.5, customer.getId());
-						List<BankAccountDTO> bankAccounts = bankAccountService.bankAccountList();
-						for(BankAccountDTO bankAccount : bankAccounts) {
-							
-							for(int i=0; i<10;i++){
-								String accountId;
-								
+						List<BankAccountDTO> bankaccounts = bankAccountService.bankAccountList();
+						
+						for(BankAccountDTO bankAccount : bankaccounts) {
+							for(int i=0; i<10; i++) {
+								String accountId ="";
 								if(bankAccount instanceof SavingBankAccountDTO) {
-									accountId =((SavingBankAccountDTO) bankAccount).getId();
-								}else{
-									accountId =((CurrentBankAccountDTO) bankAccount).getId();
+									accountId = ((SavingBankAccountDTO) bankAccount).getId();
+									bankAccountService.credit(accountId, 10000+Math.random()*120000, "Credit");
+									bankAccountService.debit(accountId, 1000+Math.random()*9000, "debit");
+								}else {
+									accountId = ((CurrentBankAccountDTO) bankAccount).getId();
+									bankAccountService.credit(accountId, 10000+Math.random()*120000, "Credit");
+									bankAccountService.debit(accountId, 1000+Math.random()*9000, "debit");
 								}
-								
-								bankAccountService.credit(accountId, 10000+Math.random()*120000, "Credit");
-								bankAccountService.debit(accountId, 1000+Math.random()*9000, "Debit");
 							}
+							
 						}
-					}catch (CustomerNotFoundException e) {
+					} catch (CustomerNotFoundException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					} catch (BankAccountNotFoundException e) {
@@ -62,7 +64,8 @@ public class EbankingBackendApplication {
 					} catch (BalanceNotSufficientException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
-					} 
+					}
+					
 				});
 			};
 		}

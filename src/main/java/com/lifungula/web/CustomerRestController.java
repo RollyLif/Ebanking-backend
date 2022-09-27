@@ -15,11 +15,9 @@ import com.lifungula.exception.CustomerNotFoundException;
 import com.lifungula.services.BankAccountService;
 
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @AllArgsConstructor
-@Slf4j
 public class CustomerRestController {
 	private BankAccountService bankAccountService;
 	

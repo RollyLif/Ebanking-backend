@@ -71,7 +71,6 @@ public class BankAccountServiceImpl implements BankAccountService{
 	public void debit(String accountID, double amount, String description) throws BankAccountNotFoundException, BalanceNotSufficientException {
 		BankAccount bankAccount = bankAccountRepository.findById(accountID).orElseThrow(()-> new BankAccountNotFoundException("BankAccount not found"));
 		if(bankAccount.getBalance()<amount) throw new BalanceNotSufficientException("Balance not sufficient");
-		
 		AccountOperation accountOperation = new AccountOperation();
 		accountOperation.setType(OperationType.DEBIT);
 		accountOperation.setAmount(amount);
@@ -120,7 +119,7 @@ public class BankAccountServiceImpl implements BankAccountService{
 		bankAccount.setOverDraft(overDraft);
 		bankAccount.setCustomer(customer);
 		}
-	 	return dtoMapper.fromCurrentBankAccount(bankAccount);
+	 	return dtoMapper.fromCurrentBankAccount(bankAccountRepository.save(bankAccount));
 	}
 
 	@Override
@@ -138,10 +137,8 @@ public class BankAccountServiceImpl implements BankAccountService{
 		bankAccount.setBalance(intialBalance);
 		bankAccount.setInterestRate(interestRate);
 		bankAccount.setCustomer(customer);
-		System.out.println("créer");
 		}
-	 	return dtoMapper.fromSavingBankAccount(bankAccount);
-	 	
+	 	return dtoMapper.fromSavingBankAccount(bankAccountRepository.save(bankAccount));
 	}
 	
 	@Override
