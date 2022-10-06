@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.lifungula.dtos.CustomerDTO;
@@ -26,6 +27,11 @@ public class CustomerRestController {
 	@GetMapping("/customers")
 	public List<CustomerDTO> customers(){
 		return bankAccountService.ListCustomers();
+	}
+	
+	@GetMapping("/customers/search")
+	public List<CustomerDTO> searchCustomers(@RequestParam(name="keyword",defaultValue="")String keyword){
+		return bankAccountService.searchCustomers(keyword);
 	}
 	
 	@GetMapping("/customers/{id}")
