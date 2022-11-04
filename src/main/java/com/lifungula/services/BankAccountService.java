@@ -7,6 +7,7 @@ import com.lifungula.dtos.AccountOperationDTO;
 import com.lifungula.dtos.BankAccountDTO;
 import com.lifungula.dtos.CurrentBankAccountDTO;
 import com.lifungula.dtos.CustomerDTO;
+import com.lifungula.dtos.DebitDTO;
 import com.lifungula.dtos.SavingBankAccountDTO;
 import com.lifungula.exception.BalanceNotSufficientException;
 import com.lifungula.exception.BankAccountNotFoundException;
@@ -19,7 +20,7 @@ public interface BankAccountService {
 	SavingBankAccountDTO saveSavingBankAccount(double intialBalance,double interestRate, Long customerId) throws CustomerNotFoundException;
 	List<CustomerDTO> ListCustomers();
 	BankAccountDTO getBankAccount(String accountid) throws BankAccountNotFoundException;
-	void debit(String accountID, double amount, String description) throws BankAccountNotFoundException, BalanceNotSufficientException;
+	void debit(DebitDTO debitDTO) throws BankAccountNotFoundException, BalanceNotSufficientException;
 	void credit(String accountID, double amount, String description) throws BankAccountNotFoundException;
 	void transfer(String accountIdSource, String accountIdDestination,double amount) throws BankAccountNotFoundException, BalanceNotSufficientException;
 	List<BankAccountDTO> bankAccountList();

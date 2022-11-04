@@ -15,6 +15,7 @@ import com.lifungula.dtos.AccountOperationDTO;
 import com.lifungula.dtos.BankAccountDTO;
 import com.lifungula.dtos.CurrentBankAccountDTO;
 import com.lifungula.dtos.CustomerDTO;
+import com.lifungula.dtos.DebitDTO;
 import com.lifungula.dtos.SavingBankAccountDTO;
 import com.lifungula.entities.AccountOperation;
 import com.lifungula.entities.BankAccount;
@@ -61,7 +62,7 @@ public class BankAccountServiceImpl implements BankAccountService{
 
 	@Override
 	public BankAccountDTO getBankAccount(String accountid) throws BankAccountNotFoundException {
-		BankAccount bankAccount = bankAccountRepository.findById(accountid).orElseThrow(()-> new BankAccountNotFoundException("BankAccount not found")); 
+		BankAccount bankAccount = bankAccountRepository.findById(accountid).get();/*.orElseThrow(()-> new BankAccountNotFoundException("BankAccount not found"))*/; 
 		if(bankAccount instanceof SavingAccount) {
 			SavingAccount savingAccount = (SavingAccount) bankAccount;
 			return dtoMapper.fromSavingBankAccount(savingAccount);
@@ -72,19 +73,19 @@ public class BankAccountServiceImpl implements BankAccountService{
 	}
 
 	@Override
-	public void debit(String accountID, double amount, String description) throws BankAccountNotFoundException, BalanceNotSufficientException {
-		BankAccount bankAccount = bankAccountRepository.findById(accountID).orElseThrow(()-> new BankAccountNotFoundException("BankAccount not found"));
-		if(bankAccount.getBalance()<amount) throw new BalanceNotSufficientException("Balance not sufficient");
+	public void debit(DebitDTO debitDTO) throws BankAccountNotFoundException, BalanceNotSufficientException {
+	    System.out.println(debitDTO.getAccountId());
+	    BankAccount bankAccount = bankAccountRepository.findById(debitDTO.getAccountId()).orElseThrow(()-> new BankAccountNotFoundException("BankAccount not found"));
+		if(bankAccount.getBalance()< debitDTO.getAmount()) throw new BalanceNotSufficientException("Balance not sufficient");
 		AccountOperation accountOperation = new AccountOperation();
 		accountOperation.setType(OperationType.DEBIT);
-		accountOperation.setAmount(amount);
-		accountOperation.setDescription(description);
+		accountOperation.setAmount(debitDTO.getAmount());
+		accountOperation.setDescription(debitDTO.getDescription());
 		accountOperation.setOperationDate(new Date());
 		accountOperation.setBankAccount(bankAccount);
 		accountOperationRepository.save(accountOperation);
-		bankAccount.setBalance(bankAccount.getBalance()-amount);
+		bankAccount.setBalance(bankAccount.getBalance()-debitDTO.getAmount());
 		bankAccountRepository.save(bankAccount);
-		
 	}
 
 	@Override
@@ -103,7 +104,7 @@ public class BankAccountServiceImpl implements BankAccountService{
 
 	@Override
 	public void transfer(String accountIdSource, String accountIdDestination, double amount) throws BankAccountNotFoundException, BalanceNotSufficientException {
-		debit(accountIdSource, amount, "transfer to "+accountIdDestination);
+		//debit(accountIdSource, amount, "transfer to "+accountIdDestination);
 		credit(accountIdDestination,amount, "transfer from "+accountIdSource);
 		
 	}
@@ -111,7 +112,6 @@ public class BankAccountServiceImpl implements BankAccountService{
 	@Override
 	public CurrentBankAccountDTO saveCurrentBankAccount(double intialBalance, double overDraft, Long customerId)
 			throws CustomerNotFoundException {
-		
 		Customer customer = customerRepository.findById(customerId).orElse(null);
 		CurrentAccount bankAccount = new CurrentAccount();
 		if(customer==null) {
@@ -129,8 +129,6 @@ public class BankAccountServiceImpl implements BankAccountService{
 	@Override
 	public SavingBankAccountDTO saveSavingBankAccount(double intialBalance, double interestRate, Long customerId)
 			throws CustomerNotFoundException {
-		
-
 		Customer customer = customerRepository.findById(customerId).orElse(null);
 		SavingAccount bankAccount = new SavingAccount ();
 		if(customer==null) {

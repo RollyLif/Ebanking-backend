@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Bean;
 import com.lifungula.dtos.BankAccountDTO;
 import com.lifungula.dtos.CurrentBankAccountDTO;
 import com.lifungula.dtos.CustomerDTO;
+import com.lifungula.dtos.DebitDTO;
 import com.lifungula.dtos.SavingBankAccountDTO;
 import com.lifungula.exception.BalanceNotSufficientException;
 import com.lifungula.exception.BankAccountNotFoundException;
@@ -42,27 +43,31 @@ public class EbankingBackendApplication {
 						
 						for(BankAccountDTO bankAccount : bankaccounts) {
 							for(int i=0; i<10; i++) {
-								String accountId ="";
 								if(bankAccount instanceof SavingBankAccountDTO) {
-									accountId = ((SavingBankAccountDTO) bankAccount).getId();
+								    String accountId = ((SavingBankAccountDTO) bankAccount).getId();
 									bankAccountService.credit(accountId, 10000+Math.random()*120000, "Credit");
-									bankAccountService.debit(accountId, 1000+Math.random()*9000, "debit");
+									DebitDTO debitDTO = new DebitDTO();
+									debitDTO.setAccountId(accountId);
+									debitDTO.setAmount(1000+Math.random()*9000);
+									debitDTO.setDescription("debit");
+									bankAccountService.debit(debitDTO);
 								}else {
-									accountId = ((CurrentBankAccountDTO) bankAccount).getId();
+								    String accountId = ((CurrentBankAccountDTO) bankAccount).getId();
 									bankAccountService.credit(accountId, 10000+Math.random()*120000, "Credit");
-									bankAccountService.debit(accountId, 1000+Math.random()*9000, "debit");
+									DebitDTO debitDTO = new DebitDTO();
+                                    debitDTO.setAccountId(accountId);
+                                    debitDTO.setAmount(1000+Math.random()*9000);
+                                    debitDTO.setDescription("debit");
+                                    bankAccountService.debit(debitDTO);
 								}
 							}
 							
 						}
 					} catch (CustomerNotFoundException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					} catch (BankAccountNotFoundException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					} catch (BalanceNotSufficientException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 					
